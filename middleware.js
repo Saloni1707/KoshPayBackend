@@ -1,26 +1,22 @@
 //middleware
 
-import JWT_SECRET from "./config.js";
 import jwt from "jsonwebtoken";
+import config from "./config.js";
 
-const authMiddleware = (req,res,next) => {
+const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
-    if(!authHeader || !authHeader.startsWith('Bearer')){
-        return res.sta
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(403).json({});
     }
 
-    const token = authHeader.split(' ')[1];
-
-    try{
-        const decoded = jwt.verify(token,JWT_SECRET);
-        if(decoded.userId){
+    const token = authHeader.split(" ")[1];
+    try {
+        const decoded = jwt.verify(token, config.JWT_SECRET);
         req.userId = decoded.userId;
         next();
-        }
-    }catch(e){
+    } catch (err) {
         return res.status(403).json({});
     }
 };
 
-export default authMiddleware ;
+export default authMiddleware;

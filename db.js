@@ -3,6 +3,7 @@ import config from "./config.js";
 
 const connectDB = async () => {
     try {
+        console.log("Connecting to MongoDB with URI:", config.MONGODB_URI);
         await mongoose.connect(config.MONGODB_URI);
         console.log("MongoDB connection successful!");
     } catch (error) {
@@ -31,7 +32,38 @@ const accountSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// New Transaction Schema
+const transactionSchema = new mongoose.Schema({
+    fromUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    toUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['success', 'failed', 'pending'],
+        default: 'pending'
+    },
+    type: {
+        type: String,
+        enum: ['transfer', 'deposit', 'withdrawal'],
+        default: 'transfer'
+    }
+}, { 
+    timestamps: true 
+});
+
 const Account = mongoose.model('Account', accountSchema);
 const User = mongoose.model('User', userSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
-export { User, Account, connectDB };
+export { User, Account, Transaction, connectDB };

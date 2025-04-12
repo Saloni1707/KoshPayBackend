@@ -1,7 +1,7 @@
 import express from "express";
 import zod from "zod";
 import jwt from "jsonwebtoken";
-import JWT_SECRET from "../config.js";
+import config from "../config.js";
 import {User,Account} from "../db.js";
 import authMiddleware from "../middleware.js";
 import bcrypt from "bcrypt";
@@ -58,7 +58,7 @@ router.post("/signup",async(req,res) => {
         {
         userId ,
         },
-         JWT_SECRET
+         config.JWT_SECRET
     );
 
     res.status(200).json({
@@ -95,14 +95,14 @@ router.post("/signin", async (req, res) => {
     }
 
     // ✅ Create JWT token
-    // const token = jwt.sign(
-    //     { userId: user._id },
-    //     JWT_SECRET
-    // );
+    const token = jwt.sign(
+        { userId: user._id },
+        config.JWT_SECRET
+    );
 
     return res.status(200).json({ 
-        
-        message:"User found !"
+        message: "User found!",
+        token: token
     });
 });
 
